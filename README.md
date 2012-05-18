@@ -9,3 +9,4 @@ Instruction to run
   java HumanPlayer/MachinePlayer/Observer ipAddressOfServer port#OfServer name
 ============
   For example: java HumanPlayer 192.168.1.100 8888 Andrew
+============
