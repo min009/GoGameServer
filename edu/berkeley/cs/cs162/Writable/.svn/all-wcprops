@@ -1,0 +1,101 @@
+K 25
+svn:wc:ra_dav:version-url
+V 70
+/cs162/group17/!svn/ver/514/cs162p3V1.2/edu/berkeley/cs/cs162/Writable
+END
+BoardInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/cs162/group17/!svn/ver/455/cs162p3V1.2/edu/berkeley/cs/cs162/Writable/BoardInfo.java
+END
+StoneColorInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/cs162/group17/!svn/ver/455/cs162p3V1.2/edu/berkeley/cs/cs162/Writable/StoneColorInfo.java
+END
+MessageProtocol.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/cs162/group17/!svn/ver/455/cs162p3V1.2/edu/berkeley/cs/cs162/Writable/MessageProtocol.java
+END
+Location.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/cs162/group17/!svn/ver/455/cs162p3V1.2/edu/berkeley/cs/cs162/Writable/Location.java
+END
+Writable.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/cs162/group17/!svn/ver/455/cs162p3V1.2/edu/berkeley/cs/cs162/Writable/Writable.java
+END
+ServerMessage.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/cs162/group17/!svn/ver/489/cs162p3V1.2/edu/berkeley/cs/cs162/Writable/ServerMessage.java
+END
+ServerReply.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/cs162/group17/!svn/ver/514/cs162p3V1.2/edu/berkeley/cs/cs162/Writable/ServerReply.java
+END
+StringInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/cs162/group17/!svn/ver/455/cs162p3V1.2/edu/berkeley/cs/cs162/Writable/StringInfo.java
+END
+ClientMessage.java
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/cs162/group17/!svn/ver/486/cs162p3V1.2/edu/berkeley/cs/cs162/Writable/ClientMessage.java
+END
+Message.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/cs162/group17/!svn/ver/486/cs162p3V1.2/edu/berkeley/cs/cs162/Writable/Message.java
+END
+GameInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/cs162/group17/!svn/ver/455/cs162p3V1.2/edu/berkeley/cs/cs162/Writable/GameInfo.java
+END
+ListInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/cs162/group17/!svn/ver/455/cs162p3V1.2/edu/berkeley/cs/cs162/Writable/ListInfo.java
+END
+ClientInfo.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/cs162/group17/!svn/ver/455/cs162p3V1.2/edu/berkeley/cs/cs162/Writable/ClientInfo.java
+END
+ClientReply.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/cs162/group17/!svn/ver/514/cs162p3V1.2/edu/berkeley/cs/cs162/Writable/ClientReply.java
+END
+Rules.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/cs162/group17/!svn/ver/507/cs162p3V1.2/edu/berkeley/cs/cs162/Writable/Rules.java
+END
+Reply.java
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/cs162/group17/!svn/ver/501/cs162p3V1.2/edu/berkeley/cs/cs162/Writable/Reply.java
+END

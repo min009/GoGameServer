@@ -1,0 +1,332 @@
+package edu.berkeley.cs.cs162.Client;
+
+//import java.io.BufferedReader;
+import java.io.DataInputStream;
+//import java.util.UUID;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+//import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.util.Random;
+
+import edu.berkeley.cs.cs162.Synchronization.ReaderWriterLock;
+import edu.berkeley.cs.cs162.Synchronization.Semaphore;
+import edu.berkeley.cs.cs162.Synchronization.ThreadSafeQueue;
+//import edu.berkeley.cs.cs162.Synchronization.ThreadSafeQueue;
+//import edu.berkeley.cs.cs162.common.OworkerMessage;
+import edu.berkeley.cs.cs162.Writable.ClientMessage;
+import edu.berkeley.cs.cs162.Writable.ClientReply;
+import edu.berkeley.cs.cs162.Writable.MessageProtocol;
+import edu.berkeley.cs.cs162.Writable.ServerMessage;
+import edu.berkeley.cs.cs162.Writable.ServerReply;
+import edu.berkeley.cs.cs162.Writable.Location;
+import edu.berkeley.cs.cs162.Writable.StringInfo;
+
+public class MachinePlayerWorker implements Runnable{
+	//only for to server thread
+	protected ThreadSafeQueue< PlayerWorkerMessage > q;
+	protected ReaderWriterLock qLock;
+	protected int myid;
+	
+	private Socket s;
+	public int numReceived;
+	public int initialRanNum;
+	public boolean sToc = false;
+	
+	//starts at 0, call se.V() when completed 3way handshake
+	protected Semaphore twh_semaphore;
+	//starts at 0, V() called twice when done assigning roles
+	protected Semaphore magical_semaphore;
+	boolean exit;
+	
+	protected MachinePlayerWorker partner;
+	protected Player player_obj; 
+	protected String pswd;//store the password
+	protected boolean recover;
+	
+	public MachinePlayerWorker(InetAddress ipaddress, int port, int randNum, Semaphore s_para, Semaphore ms, Player po, int id, String p, boolean r){
+		numReceived = -99999;
+		initialRanNum = randNum;
+		try{
+			s = new Socket(ipaddress, port);
+			s.setSoTimeout(3000);
+		}catch (IOException e){}
+		catch (Exception e){}
+		exit = false;
+		twh_semaphore = s_para;
+		magical_semaphore = ms;
+		player_obj = po;
+		this.myid = id;
+		q = new ThreadSafeQueue<PlayerWorkerMessage>(100);
+		pswd = p;
+		recover = r;
+	}
+	
+	public void addToQueue(PlayerWorkerMessage m){
+		System.out.println("adding");
+		q.add(m);
+	}
+	
+	public void sendRand(int num){
+		//serialize the random number and send it
+		try{
+			OutputStream out = s.getOutputStream();
+			DataOutputStream data_out = new DataOutputStream(out);
+	    	data_out.writeInt( num );
+			
+		}catch(IOException e){
+			System.out.println("sendRand timeout error!");
+			System.exit(-1);
+		}
+	}
+	
+	public void setPartner(MachinePlayerWorker w){
+		partner = w;
+	}
+	//needed for printingobserver to access its received random number
+	public int getReceivedRan(){
+		return numReceived;
+	}
+	
+	public void readyExit(){
+		exit = true;
+	}
+	
+	public void setReceived(int i){
+		numReceived = i;
+	}
+	
+	//3 way handshake last step: send back the random number plus one
+	public void sendReceivedPlusOne(){
+		try{
+			OutputStream out = s.getOutputStream();
+			DataOutputStream data_out = new DataOutputStream(out);
+	    	data_out.writeInt( numReceived+1 );
+			
+		}
+		catch(IOException e){
+			System.out.println("sendRand timeout error!");
+			System.exit(-1);
+		}
+	}
+	
+	
+	private void stupidAIInput(OutputStream out){
+		Random randomNumGenerator = new Random();
+		int x = randomNumGenerator.nextInt(10);
+		int y = randomNumGenerator.nextInt(10);
+		
+		try{
+			ServerReply r = new ServerReply();
+			r.setMsgType(MessageProtocol.OP_TYPE_GETMOVE);
+			r.replyOpCode = MessageProtocol.OP_STATUS_OK;
+			r.moveType = MessageProtocol.MOVE_STONE;
+			r.loc = new Location(x, y);
+			r.writeTo(out);	
+			System.out.println("MachinePlayer placed a stone at (" + x + ", " + y + ")");
+		}catch(Exception e){
+			System.out.println("MachinePlayer input error");
+			
+		}
+			
+		}
+		
+	private void run_server_to_client() {
+		try {
+			s.setSoTimeout(0);
+			ClientMessage incoming_message = new ClientMessage();
+			InputStream in = s.getInputStream();
+			OutputStream out = s.getOutputStream();
+			
+			while (!exit) {
+				// wait for gameStart message from server and set board and color
+				try{
+					System.out.println("reading");
+					incoming_message.readFrom(in);
+					System.out.println("incoming message: " + incoming_message.getMsgType());
+				}
+				catch(IOException e){
+					System.out.println("Connection down!");
+					System.out.println(e.getMessage());
+					partner.addToQueue(new PlayerWorkerMessage((byte)1111));
+					exit = true;
+				}
+				
+                if(incoming_message.getMsgType() == MessageProtocol.OP_TYPE_GAMESTART){
+					player_obj.interruptPlayer(myid);
+                	System.out.println("in gamestart");
+                	System.out.println("Game " + incoming_message.game.name.s + " is started.");
+					System.out.println("BlackStone player is " + incoming_message.blackPlayer.name.s + " " +
+							          ",and WhiteStone player is " + incoming_message.whitePlayer.name.s);
+					player_obj.receive_gameStart(incoming_message);
+					
+					ServerReply r = new ServerReply();
+					r.setMsgType(MessageProtocol.OP_TYPE_GAMESTART);
+					r.replyOpCode = MessageProtocol.OP_STATUS_OK;
+					r.writeTo(out);
+                }
+                else if (incoming_message.getMsgType() == MessageProtocol.OP_TYPE_MAKEMOVE) {
+					ServerReply r = new ServerReply();
+					r.setMsgType(MessageProtocol.OP_TYPE_MAKEMOVE);
+					r.replyOpCode = MessageProtocol.OP_STATUS_OK;
+					r.writeTo(out);
+					
+					player_obj.update_board(incoming_message);
+					System.out.println("The board for " + player_obj.name);
+					player_obj.the_board.printBoard();
+				} else if (incoming_message.getMsgType() == MessageProtocol.OP_TYPE_GETMOVE) {
+					// prompt for user input and reply
+					stupidAIInput(out);
+				}
+				else if(incoming_message.getMsgType() == MessageProtocol.OP_TYPE_GAMEOVER){
+					ServerReply r = new ServerReply();
+					r.setMsgType(MessageProtocol.OP_TYPE_GAMEOVER);
+					r.replyOpCode = MessageProtocol.OP_STATUS_OK;
+					r.writeTo(out);
+					
+					if(incoming_message.player_for_gameover.name == null){
+						incoming_message.player_for_gameover.name = new StringInfo();
+					}
+					player_obj.display_game_over(incoming_message.blackScore, incoming_message.whiteScore, incoming_message.winner_or_player.name.s, incoming_message.player_for_gameover.name.s, incoming_message.errorMsg.s);					
+					partner.addToQueue(new PlayerWorkerMessage(MessageProtocol.OP_TYPE_WAITFORGAME));
+				}
+			} // end while(!exit)
+		} 
+		catch (Exception e) {
+			System.out.println("Exception caught in Server_client worker.");
+			partner.addToQueue(new PlayerWorkerMessage(MessageProtocol.OP_TYPE_WAITFORGAME));
+		}
+	}//end run_server_to_client()
+	
+	private void run_client_to_server() {
+		try {
+			PlayerWorkerMessage m = new PlayerWorkerMessage(MessageProtocol.OP_TYPE_CONNECT);
+			PlayerWorkerMessage R = new PlayerWorkerMessage(MessageProtocol.OP_TYPE_REGISTER);
+            try{
+               if(!recover){
+            	   addToQueue(R);
+               }
+			   addToQueue(m);
+            }catch(Exception e) {
+                System.out.println("IO exception");
+    		}
+            
+			OutputStream out = s.getOutputStream();
+			InputStream  in  = s.getInputStream();
+			
+			while (!exit) {
+				PlayerWorkerMessage c = q.get();
+				System.out.println("get the message: " + c.b);
+				if(c.b == MessageProtocol.OP_TYPE_REGISTER){
+					//String randomStr = UUID.randomUUID().toString(); // Generate a random password for machine player
+					//randomStr = randomStr.replaceAll("-","");// because the random password generated is in this format: abcd-esfddd-s23de
+					ServerMessage register_message = player_obj.make_register_message(pswd);
+					register_message.writeTo(out);					
+					ClientReply cr = new ClientReply();
+					cr.setMsgType(MessageProtocol.OP_TYPE_REGISTER);
+					cr.readFrom(in);
+					if(cr.replyOpCode == MessageProtocol.OP_STATUS_OK){
+						System.out.println("Machine Player Registation Completed!");
+					}
+					else if(cr.replyOpCode == MessageProtocol.OP_ERROR_REJECTED){
+					    System.out.println("The same name is already registered, or if register is sent at any point after connect, such as during a game.");
+					}
+				}
+				
+				else if (c.b == MessageProtocol.OP_TYPE_CONNECT) {
+					// send connect message to server
+					ServerMessage connect_message = player_obj.make_connect_message(pswd);
+					connect_message.writeTo(out);
+					
+					ClientReply cr = new ClientReply();		
+					cr.setMsgType(MessageProtocol.OP_TYPE_CONNECT);
+					cr.readFrom(in);
+					
+					System.out.println("response from server for connect request.");
+					if(cr.replyOpCode == MessageProtocol.OP_STATUS_OK){
+						System.out.println("Congratulation connection established!");
+						addToQueue(new PlayerWorkerMessage(MessageProtocol.OP_TYPE_WAITFORGAME));
+					}
+					else if (cr.replyOpCode == MessageProtocol.OP_ERROR_REJECTED){
+						System.out.println("Already Connected");
+					}
+					else if (cr.replyOpCode == MessageProtocol.OP_ERROR_BAD_AUTH){
+						System.out.println("Password incorrect or invalid");
+					}
+				} 
+				else if (c.b == MessageProtocol.OP_TYPE_WAITFORGAME) {
+					// send waitForGame to server
+					ServerMessage waitForGame_message = player_obj.make_waitForGame_message();
+					waitForGame_message.writeTo(out);
+					
+					ClientReply cr = new ClientReply();
+					cr.setMsgType(MessageProtocol.OP_TYPE_WAITFORGAME);
+					cr.readFrom(in);
+					
+					if(cr.replyOpCode == MessageProtocol.OP_STATUS_OK){
+						System.out.println("Waiting for a game!");		
+					}
+					else if (cr.replyOpCode == MessageProtocol.OP_STATUS_RESUME){
+						System.out.println("Game is resuming...");
+					}
+					else if (cr.replyOpCode == MessageProtocol.OP_ERROR_REJECTED){
+						System.out.println("You are already waiting / in a Game.");
+					}
+					else if (cr.replyOpCode == MessageProtocol.OP_ERROR_UNCONNECTED){
+						addToQueue(new PlayerWorkerMessage(MessageProtocol.OP_TYPE_CONNECT));
+					}
+				} 
+				
+				else if (c.b == MessageProtocol.OP_TYPE_DISCONNECT) {
+					ServerMessage d = new ServerMessage();
+					d.setMsgType(MessageProtocol.OP_TYPE_DISCONNECT);
+					d.writeTo(out);
+					System.out.println("Disconnected");
+					System.exit(-1);
+					// Sever will disconnect the socket?
+				}
+				else if(c.b == (byte)1111){ // reconnection
+					exit = true;
+				}
+			}
+		}catch (Exception e) {
+            System.out.println("IO exception");
+            addToQueue(new PlayerWorkerMessage(MessageProtocol.OP_TYPE_CONNECT));
+		}
+	}//run_client_to_server()
+	
+	public void run(){
+		//3 way handshake set up
+		sendRand(this.initialRanNum);
+		//wait to receive the new random number
+		try{
+			InputStream in = s.getInputStream();
+			DataInputStream data_in = new DataInputStream(in);
+	    	int received_int = data_in.readInt();
+	    	setReceived(received_int);
+	    	System.out.format("This should be the sent number + 1: %d\n",data_in.readInt());
+		}catch(IOException e){
+			System.out.println("Timeout!");
+			System.exit(-1);
+		}
+		
+		//send back the random number + 1
+		sendReceivedPlusOne();
+		//release the semaphore in printingObserver
+		twh_semaphore.v();  //done with 3 way handshake
+		
+		//block until done assigning role
+		magical_semaphore.p();
+		
+		if(sToc){
+			run_server_to_client();
+		}
+		else{
+			run_client_to_server();
+		}
+		
+	}//end run
+}

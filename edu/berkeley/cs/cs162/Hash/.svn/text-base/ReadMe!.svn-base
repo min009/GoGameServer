@@ -1,0 +1,8 @@
+ClientHash and HashNSalt have function called getHash and getHashNSalt respectively, to hash strings.
+The argument for ClientHash function is a string, and the output is a String.
+
+The argument for getHashNSalt is String,and the output is a String ready to be stored into
+the database :). 
+
+the getHash and getHashNSalt function throws an Exception, so remember to use the try and catch block when 
+using this function.

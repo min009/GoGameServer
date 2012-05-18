@@ -1,0 +1,77 @@
+K 25
+svn:wc:ra_dav:version-url
+V 68
+/cs162/group17/!svn/ver/488/cs162p3V1.2/edu/berkeley/cs/cs162/Client
+END
+MachinePlayer.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/cs162/group17/!svn/ver/499/cs162p3V1.2/edu/berkeley/cs/cs162/Client/MachinePlayer.java
+END
+PrintingObserver.java
+K 25
+svn:wc:ra_dav:version-url
+V 90
+/cs162/group17/!svn/ver/455/cs162p3V1.2/edu/berkeley/cs/cs162/Client/PrintingObserver.java
+END
+HumanPlayer.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/cs162/group17/!svn/ver/519/cs162p3V1.2/edu/berkeley/cs/cs162/Client/HumanPlayer.java
+END
+PlayerWorker.java
+K 25
+svn:wc:ra_dav:version-url
+V 86
+/cs162/group17/!svn/ver/526/cs162p3V1.2/edu/berkeley/cs/cs162/Client/PlayerWorker.java
+END
+Observer.java
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/cs162/group17/!svn/ver/455/cs162p3V1.2/edu/berkeley/cs/cs162/Client/Observer.java
+END
+BaseClient.java
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/cs162/group17/!svn/ver/488/cs162p3V1.2/edu/berkeley/cs/cs162/Client/BaseClient.java
+END
+Worker.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/cs162/group17/!svn/ver/508/cs162p3V1.2/edu/berkeley/cs/cs162/Client/Worker.java
+END
+MachinePlayerWorker.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/cs162/group17/!svn/ver/530/cs162p3V1.2/edu/berkeley/cs/cs162/Client/MachinePlayerWorker.java
+END
+PlayerWorkerMessage.java
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/cs162/group17/!svn/ver/455/cs162p3V1.2/edu/berkeley/cs/cs162/Client/PlayerWorkerMessage.java
+END
+Player.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/cs162/group17/!svn/ver/455/cs162p3V1.2/edu/berkeley/cs/cs162/Client/Player.java
+END
+OworkerMessage.java
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/cs162/group17/!svn/ver/455/cs162p3V1.2/edu/berkeley/cs/cs162/Client/OworkerMessage.java
+END
+Client.java
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/cs162/group17/!svn/ver/455/cs162p3V1.2/edu/berkeley/cs/cs162/Client/Client.java
+END

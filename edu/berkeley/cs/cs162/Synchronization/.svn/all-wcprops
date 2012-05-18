@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/cs162/group17/!svn/ver/520/cs162p3V1.2/edu/berkeley/cs/cs162/Synchronization
+END
+SpinLock.java
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/cs162/group17/!svn/ver/455/cs162p3V1.2/edu/berkeley/cs/cs162/Synchronization/SpinLock.java
+END
+Semaphore.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/cs162/group17/!svn/ver/455/cs162p3V1.2/edu/berkeley/cs/cs162/Synchronization/Semaphore.java
+END
+Lock.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/cs162/group17/!svn/ver/455/cs162p3V1.2/edu/berkeley/cs/cs162/Synchronization/Lock.java
+END
+ReaderWriterLock.java
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/cs162/group17/!svn/ver/455/cs162p3V1.2/edu/berkeley/cs/cs162/Synchronization/ReaderWriterLock.java
+END
+ThreadSafeQueue.java
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/cs162/group17/!svn/ver/520/cs162p3V1.2/edu/berkeley/cs/cs162/Synchronization/ThreadSafeQueue.java
+END
+ConditionVariable.java
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/cs162/group17/!svn/ver/455/cs162p3V1.2/edu/berkeley/cs/cs162/Synchronization/ConditionVariable.java
+END
